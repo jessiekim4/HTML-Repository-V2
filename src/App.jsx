@@ -155,6 +155,8 @@ function App () {
           url = "https://store.steampowered.com/app/568220/Lobotomy_Corporation__Monster_Management_Simulation/"
         />
 
+        <hr/>
+
         <Game 
           title = "Library of Ruina"
           images = {lorImages}
@@ -163,6 +165,8 @@ function App () {
           url = "https://store.steampowered.com/app/1256670/Library_Of_Ruina/"
         />
 
+        <hr/>
+
         <Game 
           title = "Stardew Valley"
           images = {stardewImages}
@@ -170,6 +174,8 @@ function App () {
           nameOfClass = "stardew_images"
           url = "https://store.steampowered.com/app/413150/Stardew_Valley/"
         />
+
+        <hr/>
 
         <Game 
           title = "Papa's Freezeria Deluxe"
