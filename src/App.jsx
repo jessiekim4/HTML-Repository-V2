@@ -1,3 +1,4 @@
+import { useState } from 'react';
 /* This website contains each component: Slideshow, Game, Url, etc, which makes it much more organized. The embedded components within the Game component will retrieve their props from the Game component. These separate components are essentially individual parts of the website; when compiled together it makes a whole website*/
 
 // Lists which will be used for props
@@ -74,17 +75,30 @@ function Header () {
 }
 
 // props = {images : gameImages, nameOfClass : game_slides}
-// Uses a map (which is like a for each loop) to iterate through each image path directory in the images list prop and create an img
 function SlideShow (props) {
+  {/*currSlide = 0, setCurrSlide is a function. currSlide is individual for each SlideShow compnonent */}
+  const [currSlide, setCurrSlide] = useState(0)
+  
+  {/*a function to change the value of the variable currSlide and re-render the page, it increments the currSlide index based on if prev or next was clicked*/}
+  function handleSlide (increment) {
+    if (currSlide == props.images.length - 1 && increment > 0) {
+      setCurrSlide(0)
+    } else if (currSlide == 0 && increment < 0) {
+      setCurrSlide(props.images.length - 1)
+    } else {
+      setCurrSlide(currSlide + increment)
+    }
+  }
+
+  {/*returns the slideshow component*/}
   return (
     <>
       <div className="slider">
-        {props.images.map((image) => (
-          <img className={props.nameOfClass} src={image}/>
-        ))}
+        
+        <img className = {props.nameOfClass} src = {props.images[currSlide]}></img>
 
-        <button className="prev">&#10094;</button>
-        <button className="next">&#10095;</button>
+        <button className="prev" onClick={() => handleSlide(-1)}>&#10094;</button>
+        <button className="next" onClick={() => handleSlide(1)}>&#10095;</button>
       </div>
     </>
   )
@@ -99,8 +113,9 @@ function Link (props) {
 }
 
 // props = {title : "game title", paragraphs : gameParagraphs}
-// Also takes in images and nameOfClass props for the SlideShow component
+// Also takes in images and nameOfClass props for the SlideShow component (prop drilling)
 function Game (props) {
+  {/*returns the game component*/}
   return (
     <>
       <h1>{props.title}</h1>
@@ -108,7 +123,7 @@ function Game (props) {
         images = {props.images}
         nameOfClass = {props.nameOfClass}
       />
-
+      {/*loops through each paragraph of the paragraphs list and creates a <p> */}
       {props.paragraphs.map ((paragraph) => (
         <p>{paragraph}</p>
       ))}
