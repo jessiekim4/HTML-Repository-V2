@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 /* This website contains each component: Slideshow, Game, Url, etc, which makes it much more organized. The embedded components within the Game component will retrieve their props from the Game component. These separate components are essentially individual parts of the website; when compiled together it makes a whole website*/
 
 // Lists which will be used for props
@@ -139,44 +139,40 @@ function Game (props) {
   )
 }
 
-function postFetch () {
-  const myHeaders = new Headers();
-  myHeaders.append("Content-Type", "application/json");
-
-  const raw = JSON.stringify({
-    "name": "Tetris 99",
-    "description": "A classic puzzle game where you can compete against people online"
-  });
-
-  const requestOptions = {
-    method: "POST",
-    headers: myHeaders,
-    body: raw,
-    redirect: "follow"
-  };
-
-  fetch("http://127.0.0.1:8000/add/", requestOptions)
-    .then((response) => response.text())
-    .then((result) => console.log(result))
-    .catch((error) => console.error(error));
-}
-
-function Form () {
-  return(
-    <>
-    <h1>Want to request a game to be added to the website?</h1>
-    <form action="POST">
-      Name of the game: <input type="text" name="name"></input> <br/>
-      Description: <input type="text" name="description"></input> <br/>
-      <input type="submit"></input>
-    </form>
-    </>
-  )
-}
 
 // App function which compiles all the components to create the website.
 // Each game component takes in a title and paragraphs, with prop drilling the images and nameOfClass for when the slideshow component is made inside Game
 function App () {
+  const [todogames, setTodoGames] = useState([])
+
+  async function getWishlist() {
+    const response = await fetch("http://127.0.0.1:8000/wishlist");
+    const items = await response.json();
+    setTodoGames(items);
+  }
+
+  useEffect( () => {
+    getWishlist()
+  }
+  ,[])
+
+  async function onButtonClick(e) {
+    e.preventDefault()
+    
+    const newName = e.target.name.value
+    const newDescription = e.target.description.value
+
+    await fetch("http://localhost:8000/add", {
+      method: "POST", 
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({'name' : newName, 'description' : newDescription}),
+    });
+    
+    getWishlist()
+  }
+
   return (
     <>
       <div className = "header"> <Header /> </div>
@@ -225,6 +221,24 @@ function App () {
         />
 
       </div> 
+
+      <br/>
+
+      <h1>Like a Steam game and want to share? Add a game to the wishlist below!</h1>
+
+      <div className="wishlist-form">
+        <form onSubmit={onButtonClick}>
+          <input className="form-element" type="text" id="name" name="name" size="20" placeholder="Enter game here"></input>
+          <input className="form-element" type="text" id="description" name="description" size="50" placeholder="Enter game description here"></input>
+          <button className="form-element" type="submit">Add Game</button>
+        </form>
+      </div>
+
+      <ul id="todo-wishlist">
+        {todogames.map((element)=> (
+          <li>Name: {element.name},  Description: {element.description}</li>
+        ))}
+      </ul>
     </>
 
   )
